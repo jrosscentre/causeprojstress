@@ -3,10 +3,12 @@ var datapromise = d3.csv("masterdatasheet.csv")
 datapromise.then(
 function (alldata)
 {
+        get1popperc(alldata)
+    
     console.log((alldata), "coolbeans")
     setup(alldata)
-    get1popperc(alldata)
     getAllpopperc(alldata)
+ 
 },
 
  function(err)
@@ -15,6 +17,20 @@ function (alldata)
        
     }
 )
+
+
+var get1popperc = function (alldata)
+{
+    console.log(alldata[8].changetotalpop)
+
+    return alldata[0].changetotalpop
+}
+
+var getAllpopperc = function (alldata)
+{
+    console.log("good", alldata.map(get1popperc))
+    return alldata.map(get1popperc)
+}
 
 
 var screen = {width: 800, height: 500}
@@ -43,16 +59,16 @@ var setup = function (array2D)
         .range([0,width])
     
     var yScale = d3.scaleLinear()
-        .domain([0,100])
+        .domain([-3,3])
         .range([height, 0])
     
-    var zScale = d3.scaleLinear()
+    /*var zScale = d3.scaleLinear()
         .domain([7500,41000])
         .range([height, 0])
     
     var aScale = d3.scaleLinear()
         .domain([10,35])
-        .range([height,0])
+        .range([height,0])*/
     
     var xAxis = d3.axisBottom(xScale)
     var yAxis = d3.axisLeft(yScale)
@@ -75,18 +91,13 @@ var setup = function (array2D)
         .call(yAxis)
     
     
-    var degreePerc = d3.select("#graph")
-        .selectAll("g")
-        .data(array2D[0].totalpopulationpercentagewithdegree)
-        .enter()
-    
-    drawlines(array2D)
+    drawlines(getAllpopperc)
 
 }
 
 
 
-var drawlines = function(alldata, xScale, yScale, Cscale)
+var drawlines = function(alldata, xScale, yScale, Cscale, array)
     {
         
     var arrays = d3.select("#graph")
@@ -100,37 +111,19 @@ var drawlines = function(alldata, xScale, yScale, Cscale)
     
     
     var lineGenerator = d3.line()
-    .x(function(arr) 
-       {           
-        console.log();
-        return       })
     
-    .y(function(arr) 
-       {console.log();
-        return           ;})
-    .curve(d3.curveNatural);
+     var lineGenerator = d3.line()
+        .x(function(quizes){return alldata.year})
+        .y(function(quizes){return alldata.changetotalpop})
+        .curve(d3.curveNatural)
     
     arrays.append("path")
-    .datum(function(obj){ console.log(); return obj.totalpopulationpercentagewithdegree})
+    .datum(array)
     .attr("d", lineGenerator);        
     }
 
 
-var get1popperc = function (alldata)
-{
-    console.log(alldata[0])
 
-    return alldata[0].totalpopulationpecentagewithdegree
-}
-
-var getAllpopperc = function (alldata)
-{
-    
-    console.log(alldata.map(get1popperc))
-    
-    
-
-}
 
 
 
