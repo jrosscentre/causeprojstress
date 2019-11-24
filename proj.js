@@ -1,4 +1,4 @@
-var datapromise = d3.csv("master data sheet.csv")
+var datapromise = d3.csv("masterdatasheet.csv")
 
 datapromise.then(
 function (alldata)
@@ -127,6 +127,8 @@ var getAllpopperc = function (alldata)
 {
     
     console.log(alldata.map(get1popperc))
+    
+    
 
 }
 
