@@ -1,26 +1,32 @@
-var datapromise = d3.csv("master%data%sheet.csv")
+var datapromise = d3.csv("master data sheet.csv")
 
 datapromise.then(
 function (alldata)
 {
     console.log((alldata), "coolbeans")
+    setup(alldata)
+    get1popperc(alldata)
+    getAllpopperc(alldata)
 },
 
  function(err)
     {
         console.log("nope", err)
+       
     }
 )
 
 
-var screen = {width: 600, height: 500}
+var screen = {width: 800, height: 500}
 var margins = {top: 10, right: 50, bottom: 50, left:50}
 
 var svg = d3.select("svg")
 
+
+
 var setup = function (array2D)
 {
-    
+    console.log(array2D)
     d3.select("svg")
         .attr("width", screen.width)
         .attr("height", screen.height)
@@ -67,10 +73,62 @@ var setup = function (array2D)
         .attr("id", "yAxis")
         .attr("transform", "translate(25," + margins.top + ")")
         .call(yAxis)
+    
+    
+    var degreePerc = d3.select("#graph")
+        .selectAll("g")
+        .data(array2D[0].totalpopulationpercentagewithdegree)
+        .enter()
+    
+    drawlines(array2D)
 
 }
 
 
+
+var drawlines = function(alldata, xScale, yScale, Cscale)
+    {
+        
+    var arrays = d3.select("#graph")
+    .selectAll("g")
+    .data(alldata)
+    .enter()
+    .append("g")
+    .attr("fill", "none")
+    .attr("stroke", "black")
+    .attr("stroke-width", 5)  
+    
+    
+    var lineGenerator = d3.line()
+    .x(function(arr) 
+       {           
+        console.log();
+        return       })
+    
+    .y(function(arr) 
+       {console.log();
+        return           ;})
+    .curve(d3.curveNatural);
+    
+    arrays.append("path")
+    .datum(function(obj){ console.log(); return obj.totalpopulationpercentagewithdegree})
+    .attr("d", lineGenerator);        
+    }
+
+
+var get1popperc = function (alldata)
+{
+    console.log(alldata[0])
+
+    return alldata[0].totalpopulationpecentagewithdegree
+}
+
+var getAllpopperc = function (alldata)
+{
+    
+    console.log(alldata.map(get1popperc))
+
+}
 
 
 
