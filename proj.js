@@ -1,36 +1,3 @@
-var datapromise = d3.csv("masterdatasheet.csv")
-
-datapromise.then(
-function (alldata)
-{
-        get1popperc(alldata)
-    
-    console.log((alldata), "coolbeans")
-    setup(alldata)
-    getAllpopperc(alldata)
- 
-},
-
- function(err)
-    {
-        console.log("nope", err)
-       
-    }
-)
-
-
-var get1popperc = function (alldata)
-{
-    console.log(alldata[8].changetotalpop)
-
-    return alldata[0].changetotalpop
-}
-
-var getAllpopperc = function (alldata)
-{
-    console.log("good", alldata.map(get1popperc))
-    return alldata.map(get1popperc)
-}
 
 
 var screen = {width: 800, height: 500}
@@ -40,7 +7,7 @@ var svg = d3.select("svg")
 
 
 
-var setup = function (array2D)
+var setup = function (array2D,array)
 {
     console.log(array2D)
     d3.select("svg")
@@ -59,7 +26,7 @@ var setup = function (array2D)
         .range([0,width])
     
     var yScale = d3.scaleLinear()
-        .domain([-3,3])
+        .domain([-3,85])
         .range([height, 0])
     
     /*var zScale = d3.scaleLinear()
@@ -91,37 +58,123 @@ var setup = function (array2D)
         .call(yAxis)
     
     
-    drawlines(getAllpopperc)
+    drawlines(getAllpopperc(array2D))
+    drawlines(getAlltuitprivperc(array2D))
+    drawlines(getAlltuitpubperc(array2D))
+    drawlines(getAllpss(array2D))
 
 }
 
 
-
-var drawlines = function(alldata, xScale, yScale, Cscale, array)
-    {
-        
+var drawlines = function(alldata, xScale, yScale, perc)
+{  
     var arrays = d3.select("#graph")
-    .selectAll("g")
-    .data(alldata)
-    .enter()
-    .append("g")
-    .attr("fill", "none")
-    .attr("stroke", "black")
-    .attr("stroke-width", 5)  
-    
+        .selectAll("g")
+        //.data(alldata)
+    // .enter()
+        .append("g")
+        .attr("fill", "none")
+        .attr("stroke", "black")
+        .attr("stroke-width", 5)  
     
     var lineGenerator = d3.line()
-    
-     var lineGenerator = d3.line()
-        .x(function(quizes){return alldata.year})
-        .y(function(quizes){return alldata.changetotalpop})
+        .x(function(){return alldata.year})
+        .y(function(){return alldata.perc})
         .curve(d3.curveNatural)
     
     arrays.append("path")
-    .datum(array)
-    .attr("d", lineGenerator);        
-    }
+        .datum(perc)
+        .attr("d", lineGenerator);        
+}
 
+
+
+var get1popperc = function (data)
+{
+    console.log(data.changetotalpop)
+
+    return data.changetotalpop
+}
+var getAllpopperc = function (alldata)
+{
+    console.log("maptotpop")
+    return alldata.map(get1popperc)
+}
+
+
+var get1tuitprivperc = function (data)
+{
+    console.log(data.changetuitionpriv)
+
+    return data.changetuitionpriv
+}
+var getAlltuitprivperc = function (alldata)
+{
+    console.log("maptuitpriv")
+    return alldata.map(get1tuitprivperc)
+}
+
+
+var get1tuitpubperc = function (data)
+{
+    console.log(data.changetuitionpub)
+
+    return data.changetuitionpub
+}
+var getAlltuitpubperc = function (alldata)
+{
+    console.log("maptuitpub")
+    return alldata.map(get1tuitpubperc)
+}
+
+
+var get1tuitpubperc = function (data)
+{
+    console.log(data.changetuitionpub)
+
+    return data.changetuitionpub
+}
+var getAlltuitpubperc = function (alldata)
+{
+    console.log("maptuitpub")
+    return alldata.map(get1tuitpubperc)
+}
+
+
+var get1pss = function (data)
+{
+    console.log(data.changepss)
+
+    return data.changepss
+}
+var getAllpss = function (alldata)
+{
+    console.log("mappss")
+    return alldata.map(get1pss)
+}
+
+
+
+var datapromise = d3.csv("masterdatasheet.csv")
+
+datapromise.then(
+function (alldata)
+{
+    //get1popperc(alldata)
+      
+    console.log((alldata, "coolbeans"))
+    
+    setup(alldata)
+    
+ 
+},
+
+ function(err)
+    {
+        console.log("nope", err)
+       
+    }
+)
 
 
 
