@@ -26,7 +26,7 @@ var setup = function (array2D,array)
         .range([0,width])
     
     var yScale = d3.scaleLinear()
-        .domain([-3,85])
+        .domain([-3,12])
         .range([height, 0])
     
     /*var zScale = d3.scaleLinear()
@@ -58,18 +58,19 @@ var setup = function (array2D,array)
         .call(yAxis)
     
     
-    drawlines(getAllpopperc(array2D))
-    drawlines(getAlltuitprivperc(array2D))
-    drawlines(getAlltuitpubperc(array2D))
-    drawlines(getAllpss(array2D))
+    drawline(array2D, xScale, yScale, "changetotalpop")
+            
+   // drawline(getAlltuitprivperc(array2D))
+   // drawline(getAlltuitpubperc(array2D))
+   // drawline(getAllpssperc(array2D))
 
 }
 
 
-var drawlines = function(alldata, xScale, yScale, perc)
+var drawline = function(alldata, xScale, yScale, perc)
 {  
     var arrays = d3.select("#graph")
-        .selectAll("g")
+       // .selectAll("g")
         //.data(alldata)
     // .enter()
         .append("g")
@@ -78,13 +79,13 @@ var drawlines = function(alldata, xScale, yScale, perc)
         .attr("stroke-width", 5)  
     
     var lineGenerator = d3.line()
-        .x(function(){return alldata.year})
-        .y(function(){return alldata.perc})
+        .x(function(data){return xScale(data.year)})
+        .y(function(data){return yScale(data[perc])})
         .curve(d3.curveNatural)
     
     arrays.append("path")
-        .datum(perc)
-        .attr("d", lineGenerator);        
+        .datum(alldata)
+        .attr("d", lineGenerator);      
 }
 
 
@@ -141,21 +142,21 @@ var getAlltuitpubperc = function (alldata)
 }
 
 
-var get1pss = function (data)
+var get1pssperc = function (data)
 {
-    console.log(data.changepss)
+    console.log(data.adjchangepss)
 
-    return data.changepss
+    return data.adjchangepss
 }
-var getAllpss = function (alldata)
+var getAllpssperc = function (alldata)
 {
     console.log("mappss")
-    return alldata.map(get1pss)
+    return alldata.map(get1pssperc)
 }
 
 
 
-var datapromise = d3.csv("masterdatasheet.csv")
+var datapromise = d3.csv("masterdatajksheet.csv")
 
 datapromise.then(
 function (alldata)
