@@ -10,7 +10,7 @@ var svg = d3.select("svg")
 var setup = function (array2D)
 {
     console.log(array2D)
-    d3.select("svg")
+   d3.select("svg")
         .attr("width", screen.width)
         .attr("height", screen.height)
         .append("g")
@@ -25,9 +25,19 @@ var setup = function (array2D)
         .domain([1983,2018])
         .range([0,width])
     
-    var yScale = d3.scaleLinear()
-        .domain([-20,130])
+    var yScaleperc = d3.scaleLinear()
+        .domain([0,120])
         .range([height, 0])
+    var yScalepopperc = d3.scaleLinear()
+        .domain([35, 70])
+        .range([height, 0])
+    var yScaletuit = d3.scaleLinear()
+        .domain([7500, 40000])
+        .range([height, 0])
+    var yScalepss = d3.scaleLinear()
+        .domain ([10, 32])
+        .range([height, 0])
+    
     var cScale = d3.scaleOrdinal(d3.schemeTableau10)
     
     /*var zScale = d3.scaleLinear()
@@ -39,7 +49,7 @@ var setup = function (array2D)
         .range([height,0])*/
     
     var xAxis = d3.axisBottom(xScale)
-    var yAxis = d3.axisLeft(yScale)
+    var yAxis = d3.axisLeft(yScaleperc, yScaletuit)
     
     
     d3.select("svg")
@@ -48,43 +58,96 @@ var setup = function (array2D)
     
     d3.select(".axis")
         .append("g")
-        .attr("id", "xAxis")
+        .attr("id", "xAxis")  
         .attr("transform", "translate(" + margins.left + "," + (margins.top+height) + ")")
         .call(xAxis)
+    
+    /*.append("text")
+    .attr("text-anchor", "middle")
+    .text("percentage")
+        .call(xAxis)*/
+    
+   /* d3.select(".axis")
+    .append("text")
+    .attr("text-anchor", "middle")
+    .attr("transform", "translate("+(padding/2)+","+(height/2)+")rotate(-90)")
+    .text("Year")*/
+    
     
       d3.select(".axis")
         .append("g")
         .attr("id", "yAxis")
         .attr("transform", "translate(25," + margins.top + ")")
         .call(yAxis)
+    /* d3.select("svg")
+    .apppend("svg:svg")
+    .attr("width", width)
+    .attr("height",height)
+    .append("text")
+    .attr("text-anchor", "middle")
+    .attr("transform", "translate("+(padding/2)+","+(height/2)+")rotate(-90)")
+//    .text("Percent Change")*/
     
-   /* d3.select("#buttons")
-    .selectAll("button")
-    .data(array2D)
-    .enter()
-    .append("button")
-    .text(function(array2D)
-    { 
-        console.log(array2D)
-        
-        return d.columns 
-    })*/
     
     drawLengend(array2D, cScale)
     
-    drawlineperc(array2D, xScale, yScale, "changetotalpop")
-    drawlineperc(array2D, xScale, yScale, "changetuitionpriv")
-    drawlineperc(array2D, xScale, yScale, "changetuitionpub")
-    drawlineperc(array2D, xScale, yScale, "changepss")
+    drawline(array2D, xScale, yScaleperc, "changetotalpop")
+    drawline(array2D, xScale, yScaleperc, "changetuitionpriv")
+    drawline(array2D, xScale, yScaleperc, "changetuitionpub")
+    drawline(array2D, xScale, yScaleperc, "changepss")
     
-   d3.select("#totalpopact")
-    //click
-       .on("click", function (funcactdata)
+       d3.select("#origperc")
+    .on("click" , function ()
+        {
+           d3.selectAll("#graph")
+           .selectAll("g")
+           .remove()
+           
+           drawline(array2D, xScale, yScaleperc, "changetotalpop")
+    drawline(array2D, xScale, yScaleperc, "changetuitionpriv")
+    drawline(array2D, xScale, yScaleperc, "changetuitionpub")
+    drawline(array2D, xScale, yScaleperc, "changepss")
+       })
+    
+    
+    
+    d3.select("#pss")
+    .on("click" , function ()
+        {
+           d3.selectAll("#graph")
+           .selectAll("g")
+           .remove()
+           
+           drawline(array2D, xScale, yScalepss, "PSSscore")
+       })
+    
+    
+    d3.select("#tuitionprice")
+    .on("click", function ()
+        {
+        d3.selectAll("#graph")
+        .selectAll("g")
+        .remove()
+        
+        drawline(array2D, xScale, yScaletuit, "tuitionprices(public)")
+        drawline(array2D, xScale, yScaletuit, "tuitionprices(private)")
+    })
+       
+    
+    
+    
+  d3.select("#totalpopact")
+       .on("click", function ()
            {
-       console.log(funcactdata)
-       drawlineact(funcactdata, xScale, yScale, "totalpopulationpercentagewithdegree")
+ 
+       d3.selectAll("#graph")
+      .selectAll("g")
+       .remove()
+       
+       drawline(array2D, xScale, yScalepopperc, "totalpopulationpercentagewithdegree")
        
    })
+
             
         
             //d3.select("#tooltip").classed("hidden", true)
@@ -95,16 +158,11 @@ var setup = function (array2D)
            /*(array2D, xScale, yScale, "total population percentage with degree")*/
          
     //drawlineact(array2D, xScale, yScale, "total population percentage with degree")
-    
-            
-   // drawline(getAlltuitprivperc(array2D))
-   // drawline(getAlltuitpubperc(array2D))
-   // drawline(getAllpssperc(array2D))
 
 }
 
 
-var drawlineperc = function(alldata, xScale, yScale, perc)
+var drawline = function(alldata, xScale, yScale, array)
 {  
     var arrays = d3.select("#graph")
        // .selectAll("g")
@@ -117,7 +175,7 @@ var drawlineperc = function(alldata, xScale, yScale, perc)
     
     var lineGenerator = d3.line()
         .x(function(data){return xScale(data.year)})
-        .y(function(data){return yScale(data[perc])})
+        .y(function(data){return yScale(data[array])})
        .curve(d3.curveCardinal.tension(0.5))
     
     arrays.append("path")
@@ -125,7 +183,7 @@ var drawlineperc = function(alldata, xScale, yScale, perc)
         .attr("d", lineGenerator);      
 }
 
-var drawlineact = function (alldata, xScale, yScale, act)
+/*var drawlineact = function (alldata, xScale, yScale, act)
 {
     var arrays = d3.select("#graph")
        // .selectAll("g")
@@ -144,7 +202,7 @@ var drawlineact = function (alldata, xScale, yScale, act)
     arrays.append("path")
         .datum(alldata)
         .attr("d", lineGenerator);  
-}
+}*/
 
 var drawLengend = function (array2D, cScale)
 {

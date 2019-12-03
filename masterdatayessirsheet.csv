@@ -1,4 +1,4 @@
-year,male,female,totalpopulationpercentagewithdegree,tuitionprices(public),,tuitionprices (private),,PSSscore,changemalepop,changefemalepop,changetotalpop,changetuitionpub,changetuitionpriv,changepss
+year,male,female,totalpopulationpercentagewithdegree,tuitionprices(public),,tuitionprices(private),,PSSscore,changemalepop,changefemalepop,changetotalpop,changetuitionpub,changetuitionpriv,changepss
 1983,23,15.1,38.1,,,,,14.54,0,,,,,
 1984,22.9,15.7,38.6,,,,,14.71826087,-0.434782609,3.973509934,1.312335958,,,1.226003232
 1985,23.1,16,39.1,7964,,19812,,14.89652174,0.434782609,5.960264901,2.624671916,,,2.452006465
