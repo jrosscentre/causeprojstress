@@ -1,6 +1,6 @@
 
 
-var screen = {width: 800, height: 500}
+var screen = {width: 600, height: 500}
 var margins = {top: 10, right: 50, bottom: 50, left:50}
 
 var svg = d3.select("svg")
@@ -26,7 +26,7 @@ var setup = function (array2D,array)
         .range([0,width])
     
     var yScale = d3.scaleLinear()
-        .domain([-3,12])
+        .domain([-20,130])
         .range([height, 0])
     
     /*var zScale = d3.scaleLinear()
@@ -57,8 +57,45 @@ var setup = function (array2D,array)
         .attr("transform", "translate(25," + margins.top + ")")
         .call(yAxis)
     
+   /* d3.select("#buttons")
+    .selectAll("button")
+    .data(array2D)
+    .enter()
+    .append("button")
+    .text(function(array2D)
+    { 
+        console.log(array2D)
+        
+        return d.columns 
+    })*/
     
-    drawline(array2D, xScale, yScale, "changetotalpop")
+    
+    
+    drawlineperc(array2D, xScale, yScale, "changetotalpop")
+    drawlineperc(array2D, xScale, yScale, "changetuitionpriv")
+    drawlineperc(array2D, xScale, yScale, "changetuitionpub")
+    drawlineperc(array2D, xScale, yScale, "changepss")
+    
+   d3.select("#buttons")
+       .select("#changepop")
+    //click
+       .on("click", function (funcactdata)
+           {
+       console.log(funcactdata)
+       drawlineact//(funcactdata, xScale, yScale, "totalpopulationpercentagewithdegree")
+       
+   })
+            
+        
+            //d3.select("#tooltip").classed("hidden", true)
+           
+           
+           
+           
+           /*(array2D, xScale, yScale, "total population percentage with degree")*/
+         
+    //drawlineact(array2D, xScale, yScale, "total population percentage with degree")
+    
             
    // drawline(getAlltuitprivperc(array2D))
    // drawline(getAlltuitpubperc(array2D))
@@ -67,7 +104,7 @@ var setup = function (array2D,array)
 }
 
 
-var drawline = function(alldata, xScale, yScale, perc)
+var drawlineperc = function(alldata, xScale, yScale, perc)
 {  
     var arrays = d3.select("#graph")
        // .selectAll("g")
@@ -81,16 +118,58 @@ var drawline = function(alldata, xScale, yScale, perc)
     var lineGenerator = d3.line()
         .x(function(data){return xScale(data.year)})
         .y(function(data){return yScale(data[perc])})
-        .curve(d3.curveNatural)
+       // .curve(d3.curveNatural)
     
     arrays.append("path")
         .datum(alldata)
         .attr("d", lineGenerator);      
 }
 
+var drawlineact = function (alldata, xScale, yScale, act)
+{
+    var arrays = d3.select("#graph")
+       // .selectAll("g")
+        //.data(alldata)
+    // .enter()
+        .append("g")
+        .attr("fill", "none")
+        .attr("stroke", "black")
+        .attr("stroke-width", 5)  
+    
+    var lineGenerator = d3.line()
+        .x(function(data){return xScale(data.year)})
+        .y(function(data){return yScale(data[act])})
+       // .curve(d3.curveNatural)
+    
+    arrays.append("path")
+        .datum(alldata)
+        .attr("d", lineGenerator);  
+}
 
 
-var get1popperc = function (data)
+var datapromise = d3.csv("masterdatajksheet.csv")
+
+datapromise.then(
+function (alldata)
+{
+    //get1popperc(alldata)
+      
+    console.log((alldata, "coolbeans"))
+    
+    setup(alldata)
+    
+ 
+},
+
+ function(err)
+    {
+        console.log("nope", err)
+       
+    }
+)
+
+
+/*var get1popperc = function (data)
 {
     console.log(data.changetotalpop)
 
@@ -152,30 +231,10 @@ var getAllpssperc = function (alldata)
 {
     console.log("mappss")
     return alldata.map(get1pssperc)
-}
+}*/
 
 
 
-var datapromise = d3.csv("masterdatajksheet.csv")
-
-datapromise.then(
-function (alldata)
-{
-    //get1popperc(alldata)
-      
-    console.log((alldata, "coolbeans"))
-    
-    setup(alldata)
-    
- 
-},
-
- function(err)
-    {
-        console.log("nope", err)
-       
-    }
-)
 
 
 
