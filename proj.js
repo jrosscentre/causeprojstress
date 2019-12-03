@@ -1,13 +1,13 @@
 
 
-var screen = {width: 600, height: 500}
+var screen = {width: 1000, height: 500}
 var margins = {top: 10, right: 50, bottom: 50, left:50}
 
 var svg = d3.select("svg")
 
 
 
-var setup = function (array2D,array)
+var setup = function (array2D)
 {
     console.log(array2D)
     d3.select("svg")
@@ -28,6 +28,7 @@ var setup = function (array2D,array)
     var yScale = d3.scaleLinear()
         .domain([-20,130])
         .range([height, 0])
+    var cScale = d3.scaleOrdinal(d3.schemeTableau10)
     
     /*var zScale = d3.scaleLinear()
         .domain([7500,41000])
@@ -69,20 +70,19 @@ var setup = function (array2D,array)
         return d.columns 
     })*/
     
-    
+    drawLengend(array2D, cScale)
     
     drawlineperc(array2D, xScale, yScale, "changetotalpop")
     drawlineperc(array2D, xScale, yScale, "changetuitionpriv")
     drawlineperc(array2D, xScale, yScale, "changetuitionpub")
     drawlineperc(array2D, xScale, yScale, "changepss")
     
-   d3.select("#buttons")
-       .select("#changepop")
+   d3.select("#totalpopact")
     //click
        .on("click", function (funcactdata)
            {
        console.log(funcactdata)
-       drawlineact//(funcactdata, xScale, yScale, "totalpopulationpercentagewithdegree")
+       drawlineact(funcactdata, xScale, yScale, "totalpopulationpercentagewithdegree")
        
    })
             
@@ -118,7 +118,7 @@ var drawlineperc = function(alldata, xScale, yScale, perc)
     var lineGenerator = d3.line()
         .x(function(data){return xScale(data.year)})
         .y(function(data){return yScale(data[perc])})
-       // .curve(d3.curveNatural)
+       .curve(d3.curveCardinal.tension(0.5))
     
     arrays.append("path")
         .datum(alldata)
@@ -146,8 +146,37 @@ var drawlineact = function (alldata, xScale, yScale, act)
         .attr("d", lineGenerator);  
 }
 
+var drawLengend = function (array2D, cScale)
+{
+    d3.select("svg")
+    .append("g").attr("id","legend")
+    .attr("transform","translate("+(screen.width-margins.right)+","+(margins.top)+")");
+    var gs = d3.select("#legend")
+    .selectAll("g")
+    .data(array2D)
+    .enter()
+    .append("g")
+    .attr("fill",function(arr)
+         {
+        return cScale(arr.name);
+    })
+    .attr("transform", function(arr,i)
+         {
+        return "translate(0, "+i*14+")";
+    })
+gs.append("rect").attr("width", 30).attr("height",10);
+    
+    gs.append("text")
+    .text(function(arr){return arr.name})
+    .attr("x", 15)
+    .attr("y", 10)
+    .attr("fill", "black")
+}
 
-var datapromise = d3.csv("masterdatajksheet.csv")
+
+
+
+var datapromise = d3.csv("masterdatayessirsheet.csv")
 
 datapromise.then(
 function (alldata)
