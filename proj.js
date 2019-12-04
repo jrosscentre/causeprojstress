@@ -1,6 +1,6 @@
 
 
-var screen = {width: 1000, height: 500}
+var screen = {width: 800, height: 500}
 var margins = {top: 10, right: 50, bottom: 50, left:50}
 
 var svg = d3.select("svg")
@@ -134,12 +134,19 @@ var setup = function (array2D)
            d3.selectAll("#graph")
            .selectAll("g")
            .remove()
-           
+           d3.selectAll("#legend")
+           .selectAll("g")
+           .remove()
            drawline(array2D, xScale, yScaleperc, cScale, "changetotalpop")
     drawline(array2D, xScale, yScaleperc, cScale, "changetuitionpriv")
     drawline(array2D, xScale, yScaleperc, cScale, "changetuitionpub")
     drawline(array2D, xScale, yScaleperc, cScale, "changepss")
-       })
+        drawLengend()
+    
+       
+   })
+
+       
     
     
     
@@ -147,6 +154,9 @@ var setup = function (array2D)
     .on("click" , function ()
         {
            d3.selectAll("#graph")
+           .selectAll("g")
+           .remove()
+           d3.selectAll("#legend")
            .selectAll("g")
            .remove()
            
@@ -158,6 +168,9 @@ var setup = function (array2D)
     .on("click", function ()
         {
         d3.selectAll("#graph")
+        .selectAll("g")
+        .remove()
+        d3.selectAll("#legend")
         .selectAll("g")
         .remove()
         
@@ -175,14 +188,15 @@ var setup = function (array2D)
        d3.selectAll("#graph")
       .selectAll("g")
        .remove()
+        d3.selectAll("#legend")
+        .selectAll("g")
+        .remove()
        
        drawline(array2D, xScale, yScalepopperc, cScale,  "totalpopulationpercentagewithdegree")
       drawline(array2D, xScale, yScalepopperc, cScale, "female")
       drawline(array2D, xScale, yScalepopperc, cScale, "male")
       
-       
-   })
-
+  })
             
         
             //d3.select("#tooltip").classed("hidden", true)
@@ -205,7 +219,7 @@ var drawline = function(alldata, xScale, yScale, cScale, array)
     // .enter()
         .append("g")
         .attr("fill", "none")
-        .attr("stroke", "black")
+        .attr("stroke", function(d){return cScale(array)})
         .attr("stroke-width", 5)  
     
     var lineGenerator = d3.line()
@@ -216,30 +230,13 @@ var drawline = function(alldata, xScale, yScale, cScale, array)
     arrays.append("path")
         .datum(alldata)
         .attr("d", lineGenerator)
+    
+    
     .on("mouseover", function()
             {
                 svg.selectAll("#info")  
                     .remove()
             
-                /* // crappy svg version of tooltip
-                svg.selectAll("text")                           .data(array2D[0].quizes)
-                    .enter()
-                    .append("text")
-                    .text("Day: " + quiz.day + " " + "Grade: " + quiz.grade)
-                    .attr("style", "font-size: 10px")
-                    .attr("id", "info")
-                    .attr("x", xScale(quiz.day))
-                    .attr("y", function()
-                    {
-                        if(quiz.grade < 10){    
-                        return yScale(quiz.grade)
-                        }else{
-                            return yScale(quiz.grade) + 30
-                        }
-                    })
-                    //.text(quiz.day)
-                    */
-               //console.log("event", d3.event)
                 d3.select("#tooltip")
                     .style("left", (d3.event.pageX + 20) + "px")
                     .style("top", (d3.event.pageY + 28) + "px")
@@ -254,7 +251,11 @@ var drawline = function(alldata, xScale, yScale, cScale, array)
     
 }
 
-var drawLengend = function (array2D, cScale, array)
+
+
+var legendArray = [ "total population change", "tuition price change", "PSS(percieved stress scale) change"]
+
+var drawLengend = function (array, cScale, array)
 {
     d3.select("svg")
     .append("g")
@@ -263,8 +264,8 @@ var drawLengend = function (array2D, cScale, array)
     
     var gs = d3.select("#legend")
     .selectAll("g")
-    .data(array2D.columns)
-    .enter()
+    //.data()
+    //.enter()
     .append("g")
     .attr("transform", function(arr,i)
          {
@@ -279,7 +280,7 @@ gs.append("rect").attr("width", 50).attr("height",20)
     
     
     gs.append("text")
-    .text(function(arr){return arr})
+    .text(legendArray)
     .attr("x", 15)
     .attr("y", 10)
     //.attr("fill", "black")
