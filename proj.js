@@ -17,6 +17,34 @@ var setup = function (array2D)
         .attr("id", "graph")
         .attr("transform", "translate(" + margins.left + ","+margins.top+")");
     
+    d3.select("svg")
+    .append("svg")
+    .attr("width", screen.width)
+    .attr("width", screen.height)
+    .attr("transform", "translate(" + margins.left + ","+margins.top+")")
+    .append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", (margins.left-60))
+    .attr("x", 0-(height/2))
+    .attr("dy", "1em")
+    .style("text-anchor", "middle")
+    .text("percentage")
+    
+    d3.select("svg")
+    .append("svg")
+    .attr("width", screen.width)
+    .attr("width", screen.height)
+    .attr("transform", "translate(" + margins.left + ","+margins.top+")")
+    .append("text")
+    .attr("text-anchor", "middle")
+    //.attr("transform", "translate("+(padding/2)+","+(height/2)+")")
+    .text("Year")
+
+    
+    
+
+    
+    
     var width= screen.width - margins.left-margins.right;
     var height = screen.height - margins.top - margins.bottom;
 
@@ -29,7 +57,7 @@ var setup = function (array2D)
         .domain([0,120])
         .range([height, 0])
     var yScalepopperc = d3.scaleLinear()
-        .domain([35, 70])
+        .domain([10, 70])
         .range([height, 0])
     var yScaletuit = d3.scaleLinear()
         .domain([7500, 40000])
@@ -38,7 +66,7 @@ var setup = function (array2D)
         .domain ([10, 32])
         .range([height, 0])
     
-    var cScale = d3.scaleOrdinal(d3.schemeTableau10)
+    
     
     /*var zScale = d3.scaleLinear()
         .domain([7500,41000])
@@ -49,7 +77,8 @@ var setup = function (array2D)
         .range([height,0])*/
     
     var xAxis = d3.axisBottom(xScale)
-    var yAxis = d3.axisLeft(yScaleperc, yScaletuit)
+    var yAxis = d3.axisLeft(yScaleperc)
+    var cScale = d3.scaleOrdinal(d3.schemeTableau10)
     
     
     d3.select("svg")
@@ -79,6 +108,9 @@ var setup = function (array2D)
         .attr("id", "yAxis")
         .attr("transform", "translate(25," + margins.top + ")")
         .call(yAxis)
+    
+    
+    
     /* d3.select("svg")
     .apppend("svg:svg")
     .attr("width", width)
@@ -91,10 +123,10 @@ var setup = function (array2D)
     
     drawLengend(array2D, cScale)
     
-    drawline(array2D, xScale, yScaleperc, "changetotalpop")
-    drawline(array2D, xScale, yScaleperc, "changetuitionpriv")
-    drawline(array2D, xScale, yScaleperc, "changetuitionpub")
-    drawline(array2D, xScale, yScaleperc, "changepss")
+    drawline(array2D, xScale, yScaleperc, cScale, "changetotalpop")
+    drawline(array2D, xScale, yScaleperc, cScale, "changetuitionpriv")
+    drawline(array2D, xScale, yScaleperc, cScale, "changetuitionpub")
+    drawline(array2D, xScale, yScaleperc, cScale, "changepss")
     
        d3.select("#origperc")
     .on("click" , function ()
@@ -103,10 +135,10 @@ var setup = function (array2D)
            .selectAll("g")
            .remove()
            
-           drawline(array2D, xScale, yScaleperc, "changetotalpop")
-    drawline(array2D, xScale, yScaleperc, "changetuitionpriv")
-    drawline(array2D, xScale, yScaleperc, "changetuitionpub")
-    drawline(array2D, xScale, yScaleperc, "changepss")
+           drawline(array2D, xScale, yScaleperc, cScale, "changetotalpop")
+    drawline(array2D, xScale, yScaleperc, cScale, "changetuitionpriv")
+    drawline(array2D, xScale, yScaleperc, cScale, "changetuitionpub")
+    drawline(array2D, xScale, yScaleperc, cScale, "changepss")
        })
     
     
@@ -118,7 +150,7 @@ var setup = function (array2D)
            .selectAll("g")
            .remove()
            
-           drawline(array2D, xScale, yScalepss, "PSSscore")
+           drawline(array2D, xScale, yScalepss, cScale, "PSSscore")
        })
     
     
@@ -129,8 +161,8 @@ var setup = function (array2D)
         .selectAll("g")
         .remove()
         
-        drawline(array2D, xScale, yScaletuit, "tuitionprices(public)")
-        drawline(array2D, xScale, yScaletuit, "tuitionprices(private)")
+        drawline(array2D, xScale, yScaletuit, cScale, "tuitionprices(public)")
+        drawline(array2D, xScale, yScaletuit, cScale, "tuitionprices(private)")
     })
        
     
@@ -144,7 +176,10 @@ var setup = function (array2D)
       .selectAll("g")
        .remove()
        
-       drawline(array2D, xScale, yScalepopperc, "totalpopulationpercentagewithdegree")
+       drawline(array2D, xScale, yScalepopperc, cScale,  "totalpopulationpercentagewithdegree")
+      drawline(array2D, xScale, yScalepopperc, cScale, "female")
+      drawline(array2D, xScale, yScalepopperc, cScale, "male")
+      
        
    })
 
@@ -162,7 +197,7 @@ var setup = function (array2D)
 }
 
 
-var drawline = function(alldata, xScale, yScale, array)
+var drawline = function(alldata, xScale, yScale, cScale, array)
 {  
     var arrays = d3.select("#graph")
        // .selectAll("g")
@@ -180,55 +215,74 @@ var drawline = function(alldata, xScale, yScale, array)
     
     arrays.append("path")
         .datum(alldata)
-        .attr("d", lineGenerator);      
+        .attr("d", lineGenerator)
+    .on("mouseover", function()
+            {
+                svg.selectAll("#info")  
+                    .remove()
+            
+                /* // crappy svg version of tooltip
+                svg.selectAll("text")                           .data(array2D[0].quizes)
+                    .enter()
+                    .append("text")
+                    .text("Day: " + quiz.day + " " + "Grade: " + quiz.grade)
+                    .attr("style", "font-size: 10px")
+                    .attr("id", "info")
+                    .attr("x", xScale(quiz.day))
+                    .attr("y", function()
+                    {
+                        if(quiz.grade < 10){    
+                        return yScale(quiz.grade)
+                        }else{
+                            return yScale(quiz.grade) + 30
+                        }
+                    })
+                    //.text(quiz.day)
+                    */
+               //console.log("event", d3.event)
+                d3.select("#tooltip")
+                    .style("left", (d3.event.pageX + 20) + "px")
+                    .style("top", (d3.event.pageY + 28) + "px")
+                    //.attr("color", "red")
+                    .text("cool")
+                    .classed("hidden", false)
+            })
+        .on("mouseout",function(){
+            d3.select("#tooltip").classed("hidden",true)
+        })
+        //.on("mouseover", "red")
+    
 }
 
-/*var drawlineact = function (alldata, xScale, yScale, act)
-{
-    var arrays = d3.select("#graph")
-       // .selectAll("g")
-        //.data(alldata)
-    // .enter()
-        .append("g")
-        .attr("fill", "none")
-        .attr("stroke", "black")
-        .attr("stroke-width", 5)  
-    
-    var lineGenerator = d3.line()
-        .x(function(data){return xScale(data.year)})
-        .y(function(data){return yScale(data[act])})
-       // .curve(d3.curveNatural)
-    
-    arrays.append("path")
-        .datum(alldata)
-        .attr("d", lineGenerator);  
-}*/
-
-var drawLengend = function (array2D, cScale)
+var drawLengend = function (array2D, cScale, array)
 {
     d3.select("svg")
-    .append("g").attr("id","legend")
+    .append("g")
+    .attr("id","legend")
     .attr("transform","translate("+(screen.width-margins.right)+","+(margins.top)+")");
+    
     var gs = d3.select("#legend")
     .selectAll("g")
-    .data(array2D)
+    .data(array2D.columns)
     .enter()
     .append("g")
-    .attr("fill",function(arr)
-         {
-        return cScale(arr.name);
-    })
     .attr("transform", function(arr,i)
          {
-        return "translate(0, "+i*14+")";
+        return "translate(0, "+i*30+")";
     })
-gs.append("rect").attr("width", 30).attr("height",10);
+    
+gs.append("rect").attr("width", 50).attr("height",20)
+    .attr("fill", function (columns)
+          {
+    return cScale(columns)
+})
+    
     
     gs.append("text")
-    .text(function(arr){return arr.name})
+    .text(function(arr){return arr})
     .attr("x", 15)
     .attr("y", 10)
-    .attr("fill", "black")
+    //.attr("fill", "black")
 }
 
 
@@ -239,7 +293,7 @@ var datapromise = d3.csv("masterdatayessirsheet.csv")
 datapromise.then(
 function (alldata)
 {
-    //get1popperc(alldata)
+    
       
     console.log((alldata, "coolbeans"))
     
