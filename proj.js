@@ -124,28 +124,13 @@ var setup = function (array2D)
     drawLengend(array2D, cScale)
     
     drawline(array2D, xScale, yScaleperc, cScale, "changetotalpop")
-    drawline(array2D, xScale, yScaleperc, cScale, "changetuitionpriv")
-    drawline(array2D, xScale, yScaleperc, cScale, "changetuitionpub")
+    //drawline(array2D, xScale, yScaleperc, cScale, "changetuitionpriv")
+    //drawline(array2D, xScale, yScaleperc, cScale, "changetuitionpub")
+    drawline(array2D, xScale, yScaleperc, cScale, "changetuition")
     drawline(array2D, xScale, yScaleperc, cScale, "changepss")
     
-       d3.select("#origperc")
-    .on("click" , function ()
-        {
-           d3.selectAll("#graph")
-           .selectAll("g")
-           .remove()
-           d3.selectAll("#legend")
-           .selectAll("g")
-           .remove()
-           drawline(array2D, xScale, yScaleperc, cScale, "changetotalpop")
-    drawline(array2D, xScale, yScaleperc, cScale, "changetuitionpriv")
-    drawline(array2D, xScale, yScaleperc, cScale, "changetuitionpub")
-    drawline(array2D, xScale, yScaleperc, cScale, "changepss")
-        drawLengend()
-    
-       
-   })
-
+      
+  
        
     
     
@@ -191,13 +176,40 @@ var setup = function (array2D)
         d3.selectAll("#legend")
         .selectAll("g")
         .remove()
+      var legendArraypopperc = [{name:"population percentage with degree", }]
        
        drawline(array2D, xScale, yScalepopperc, cScale,  "totalpopulationpercentagewithdegree")
       drawline(array2D, xScale, yScalepopperc, cScale, "female")
       drawline(array2D, xScale, yScalepopperc, cScale, "male")
       
   })
-            
+    
+    
+             d3.select("#origperc")
+    .on("click" , function (array, index)
+        {
+           
+           console.log(array)
+                 
+            var legendArrayperc = [{name:"total population percent change", index:"changetotalpop"}, {name:"tuition price percent change", index:"changetuition"}, {name:"PSS(percieved stress scale) percent change", index:"changepss"}]
+    
+           
+           d3.selectAll("#graph")
+           .selectAll("g")
+           .remove()
+           d3.selectAll("#legend")
+           .selectAll("g")
+           .remove()
+                 
+           drawline(array2D, xScale, yScaleperc, cScale, "changetotalpop")
+    drawline(array2D, xScale, yScaleperc, cScale, "changetuition")
+    drawline(array2D, xScale, yScaleperc, cScale, "changepss")
+           
+       
+         drawLengend(legendArrayperc, cScale)   
+         
+       
+   })
         
             //d3.select("#tooltip").classed("hidden", true)
            
@@ -253,9 +265,7 @@ var drawline = function(alldata, xScale, yScale, cScale, array)
 
 
 
-var legendArray = [ "total population change", "tuition price change", "PSS(percieved stress scale) change"]
-
-var drawLengend = function (array, cScale, array)
+var drawLengend = function (legarray, cScale)
 {
     d3.select("svg")
     .append("g")
@@ -264,8 +274,8 @@ var drawLengend = function (array, cScale, array)
     
     var gs = d3.select("#legend")
     .selectAll("g")
-    //.data()
-    //.enter()
+    .data(legarray)
+    .enter()
     .append("g")
     .attr("transform", function(arr,i)
          {
@@ -273,14 +283,14 @@ var drawLengend = function (array, cScale, array)
     })
     
 gs.append("rect").attr("width", 50).attr("height",20)
-    .attr("fill", function (columns)
+    .attr("fill", function (arr)
           {
-    return cScale(columns)
+    return cScale(arr.index)
 })
     
     
     gs.append("text")
-    .text(legendArray)
+    .text(function(arr){return arr.name})
     .attr("x", 15)
     .attr("y", 10)
     //.attr("fill", "black")
