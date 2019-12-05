@@ -1,7 +1,7 @@
 
 
 var screen = {width: 800, height: 500}
-var margins = {top: 10, right: 50, bottom: 50, left:50}
+var margins = {top: 10, right: 50, bottom: 50, left:70}
 
 var svg = d3.select("svg")
 
@@ -10,38 +10,43 @@ var svg = d3.select("svg")
 var setup = function (array2D)
 {
     console.log(array2D)
-   d3.select("svg")
+  var svg = d3.select("svg")
         .attr("width", screen.width)
         .attr("height", screen.height)
         .append("g")
         .attr("id", "graph")
         .attr("transform", "translate(" + margins.left + ","+margins.top+")");
     
-    d3.select("svg")
-    .append("svg")
-    .attr("width", screen.width)
-    .attr("width", screen.height)
-    .attr("transform", "translate(" + margins.left + ","+margins.top+")")
-    .append("text")
+    //d3.select("svg")
+    //.append("svg")
+    //.attr("width", screen.width)
+    //.attr("width", screen.height)
+    //.attr("transform", "translate(" + margins.left + ","+margins.top+")")
+    svg.append("text")
     .attr("transform", "rotate(-90)")
-    .attr("y", (margins.left-60))
+    .attr("y", (margins.left-130))
     .attr("x", 0-(height/2))
     .attr("dy", "1em")
     .style("text-anchor", "middle")
-    .text("percentage")
+    .text("Percentage")
+    
+    //d3.select("svg")
+    //.append("svg")
+    //.attr("width", screen.width)
+    //.attr("width", screen.height)
+    //.attr("transform", "translate(" + margins.left + ","+margins.top+")")
+    svg.append("text")
+    .attr("text-anchor", "middle")
+    .attr("transform", "translate("+(height/2)+")")
+    .text("Year")
+
     
     d3.select("svg")
     .append("svg")
     .attr("width", screen.width)
     .attr("width", screen.height)
     .attr("transform", "translate(" + margins.left + ","+margins.top+")")
-    .append("text")
-    .attr("text-anchor", "middle")
-    //.attr("transform", "translate("+(padding/2)+","+(height/2)+")")
-    .text("Year")
-
-    
-    
+ 
 
     
     
@@ -106,7 +111,7 @@ var setup = function (array2D)
       d3.select(".axis")
         .append("g")
         .attr("id", "yAxis")
-        .attr("transform", "translate(25," + margins.top + ")")
+        .attr("transform", "translate("+margins.left+"," + margins.top + ")")
         .call(yAxis)
     
     
@@ -121,7 +126,7 @@ var setup = function (array2D)
 //    .text("Percent Change")*/
     
     
-    drawLengend(array2D, cScale)
+   drawLegend(array2D, cScale)
     
     drawline(array2D, xScale, yScaleperc, cScale, "changetotalpop")
     //drawline(array2D, xScale, yScaleperc, cScale, "changetuitionpriv")
@@ -129,7 +134,7 @@ var setup = function (array2D)
     drawline(array2D, xScale, yScaleperc, cScale, "changetuition")
     drawline(array2D, xScale, yScaleperc, cScale, "changepss")
     
-      
+   
   
        
     
@@ -144,8 +149,25 @@ var setup = function (array2D)
            d3.selectAll("#legend")
            .selectAll("g")
            .remove()
+        
+        d3.selectAll("#yAxis")
+        .selectAll("g")
+        .remove()
+        
+        var yScalepss = d3.scaleLinear()
+        .domain ([10, 32])
+        .range([height, 0])
+        
+        var yAxis = d3.axisLeft(yScalepss)
+        d3.select(".axis")
+        .append("g")
+        .attr("id", "yAxis")
+        .attr("transform", "translate("+margins.left+"," + margins.top + ")")
+        .call(yAxis)
            
            drawline(array2D, xScale, yScalepss, cScale, "PSSscore")
+        var legendArraypss = [{name: "PSS score", index:"PSSscore"}]
+        drawLegend(legendArraypss, cScale)
        })
     
     
@@ -159,11 +181,33 @@ var setup = function (array2D)
         .selectAll("g")
         .remove()
         
+        d3.selectAll("#yAxis")
+        .selectAll("g")
+        .remove()
+        
+        var yScaletuit = d3.scaleLinear()
+        .domain([7500, 40000])
+        .range([height, 0])
+        
+        var yAxis = d3.axisLeft(yScaletuit)
+        d3.select(".axis")
+        .append("g")
+        .attr("id", "yAxis")
+        .attr("transform", "translate("+margins.left+"," + margins.top + ")")
+        .call(yAxis)
+        
+        
+        
+        
         drawline(array2D, xScale, yScaletuit, cScale, "tuitionprices(public)")
         drawline(array2D, xScale, yScaletuit, cScale, "tuitionprices(private)")
+        drawline(array2D, xScale, yScaletuit, cScale, "avgtuitioprice")
+        
+        var legendArraytuition = [{name: "public college tuition prices", index:"tuitionprices(public)"},{name:"private college tuition prices", index: "tuitionprices(private)"},{name:"average tuition prices", index:"avgtuitioprice"}]
+         
+        drawLegend(legendArraytuition, cScale)
     })
-       
-    
+  
     
     
   d3.select("#totalpopact")
@@ -176,13 +220,31 @@ var setup = function (array2D)
         d3.selectAll("#legend")
         .selectAll("g")
         .remove()
+      
+       d3.selectAll("#yAxis")
+        .selectAll("g")
+        .remove()
+        
+      var yScaleperc = d3.scaleLinear()
+        .domain([0,120])
+        .range([height, 0])
+        
+        var yAxis = d3.axisLeft(yScaleperc)
+        
+        d3.select(".axis")
+        .append("g")
+        .attr("id", "yAxis")
+        .attr("transform", "translate("+margins.left+"," + margins.top + ")")
+        .call(yAxis)
+      
       var legendArraypopperc = [{name:"population percentage with degree", index:"totalpopulationpercentagewithdegree"}, {name:"female population percentage", index:"female"}, {name:"male population percentage", index:"male"}]
        
        drawline(array2D, xScale, yScalepopperc, cScale,  "totalpopulationpercentagewithdegree")
       drawline(array2D, xScale, yScalepopperc, cScale, "female")
       drawline(array2D, xScale, yScalepopperc, cScale, "male")
+   
       
-       drawLengend(legendArraypopperc, cScale)  
+       drawLegend(legendArraypopperc, cScale)  
   })
     
     
@@ -201,12 +263,29 @@ var setup = function (array2D)
            d3.selectAll("#legend")
            .selectAll("g")
            .remove()
+        
+        d3.selectAll("#yAxis")
+        .selectAll("g")
+        .remove()
+        d3.selectAll()
+        
+      var yScaleperc = d3.scaleLinear()
+        .domain([0,120])
+        .range([height, 0])
+        
+        var yAxis = d3.axisLeft(yScaleperc)
+        
+        d3.select(".axis")
+        .append("g")
+        .attr("id", "yAxis")
+        .attr("transform", "translate("+margins.left+"," + margins.top + ")")
+        .call(yAxis)
                  
            drawline(array2D, xScale, yScaleperc, cScale, "changetotalpop")
-    drawline(array2D, xScale, yScaleperc, cScale, "changetuition")
+        drawline(array2D, xScale, yScaleperc, cScale, "changetuition")
     drawline(array2D, xScale, yScaleperc, cScale, "changepss")
            
-         drawLengend(legendArrayperc, cScale)   
+         drawLegend(legendArrayperc, cScale)   
          
        
    })
@@ -229,6 +308,7 @@ var drawline = function(alldata, xScale, yScale, cScale, array)
        // .selectAll("g")
         //.data(alldata)
     // .enter()
+        
         .append("g")
         .attr("fill", "none")
         .attr("stroke", function(d){return cScale(array)})
@@ -265,7 +345,7 @@ var drawline = function(alldata, xScale, yScale, cScale, array)
 
 
 
-var drawLengend = function (legarray, cScale)
+var drawLegend = function (legarray, cScale)
 {
     d3.select("svg")
     .append("g")
