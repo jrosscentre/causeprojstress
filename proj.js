@@ -176,12 +176,13 @@ var setup = function (array2D)
         d3.selectAll("#legend")
         .selectAll("g")
         .remove()
-      var legendArraypopperc = [{name:"population percentage with degree", }]
+      var legendArraypopperc = [{name:"population percentage with degree", index:"totalpopulationpercentagewithdegree"}, {name:"female population percentage", index:"female"}, {name:"male population percentage", index:"male"}]
        
        drawline(array2D, xScale, yScalepopperc, cScale,  "totalpopulationpercentagewithdegree")
       drawline(array2D, xScale, yScalepopperc, cScale, "female")
       drawline(array2D, xScale, yScalepopperc, cScale, "male")
       
+       drawLengend(legendArraypopperc, cScale)  
   })
     
     
@@ -205,7 +206,6 @@ var setup = function (array2D)
     drawline(array2D, xScale, yScaleperc, cScale, "changetuition")
     drawline(array2D, xScale, yScaleperc, cScale, "changepss")
            
-       
          drawLengend(legendArrayperc, cScale)   
          
        
