@@ -1,7 +1,7 @@
 
 
-var screen = {width: 800, height: 500}
-var margins = {top: 10, right: 50, bottom: 50, left:70}
+var screen = {width: 1000, height: 700}
+var margins = {top: 10, right: 50, bottom: 50, left:50}
 
 var svg = d3.select("svg")
 
@@ -35,10 +35,10 @@ var setup = function (array2D)
     //.attr("width", screen.width)
     //.attr("width", screen.height)
     //.attr("transform", "translate(" + margins.left + ","+margins.top+")")
-    svg.append("text")
-    .attr("text-anchor", "middle")
-    .attr("transform", "translate("+(height/2)+")")
-    .text("Year")
+   // svg.append("text")
+    //.attr("text-anchor", "middle")
+    //.attr("transform", "translate("+(height/2)+")")
+    //.text("Year")
 
     
     d3.select("svg")
@@ -125,8 +125,8 @@ var setup = function (array2D)
     .attr("transform", "translate("+(padding/2)+","+(height/2)+")rotate(-90)")
 //    .text("Percent Change")*/
     
-    
-   drawLegend(array2D, cScale)
+       var legendArrayperc = [{name:"Total Population with Degree % Change", index:"changetotalpop"}, {name:"Tuition Price % Change", index:"changetuition"}, {name:"PSS(percieved stress scale) % Change", index:"changepss"}]
+   drawLegend(legendArrayperc, cScale)
     
     drawline(array2D, xScale, yScaleperc, cScale, "changetotalpop")
     //drawline(array2D, xScale, yScaleperc, cScale, "changetuitionpriv")
@@ -166,7 +166,7 @@ var setup = function (array2D)
         .call(yAxis)
            
            drawline(array2D, xScale, yScalepss, cScale, "PSSscore")
-        var legendArraypss = [{name: "PSS score", index:"PSSscore"}]
+        var legendArraypss = [{name: "PSS score (under 25 years old)", index:"PSSscore"}]
         drawLegend(legendArraypss, cScale)
        })
     
@@ -203,7 +203,7 @@ var setup = function (array2D)
         drawline(array2D, xScale, yScaletuit, cScale, "tuitionprices(private)")
         drawline(array2D, xScale, yScaletuit, cScale, "avgtuitioprice")
         
-        var legendArraytuition = [{name: "public college tuition prices", index:"tuitionprices(public)"},{name:"private college tuition prices", index: "tuitionprices(private)"},{name:"average tuition prices", index:"avgtuitioprice"}]
+        var legendArraytuition = [{name: "Public College Tuition Prices", index:"tuitionprices(public)"},{name:"Private College Tuition Prices", index: "tuitionprices(private)"},{name:"Average Tuition Prices", index:"avgtuitioprice"}]
          
         drawLegend(legendArraytuition, cScale)
     })
@@ -237,7 +237,7 @@ var setup = function (array2D)
         .attr("transform", "translate("+margins.left+"," + margins.top + ")")
         .call(yAxis)
       
-      var legendArraypopperc = [{name:"population percentage with degree", index:"totalpopulationpercentagewithdegree"}, {name:"female population percentage", index:"female"}, {name:"male population percentage", index:"male"}]
+      var legendArraypopperc = [{name:"Population % with Degree", index:"totalpopulationpercentagewithdegree"}, {name:"Female Population % with Degree", index:"female"}, {name:"Male Population % with Degree", index:"male"}]
        
        drawline(array2D, xScale, yScalepopperc, cScale,  "totalpopulationpercentagewithdegree")
       drawline(array2D, xScale, yScalepopperc, cScale, "female")
@@ -254,7 +254,7 @@ var setup = function (array2D)
            
            console.log(array)
                  
-            var legendArrayperc = [{name:"total population percent change", index:"changetotalpop"}, {name:"tuition price percent change", index:"changetuition"}, {name:"PSS(percieved stress scale) percent change", index:"changepss"}]
+            var legendArrayperc = [{name:"Total Population % Change", index:"changetotalpop"}, {name:"Tuition Price % Change", index:"changetuition"}, {name:"PSS(percieved stress scale) % Change", index:"changepss"}]
     
            
            d3.selectAll("#graph")
@@ -312,8 +312,19 @@ var drawline = function(alldata, xScale, yScale, cScale, array)
         .append("g")
         .attr("fill", "none")
         .attr("stroke", function(d){return cScale(array)})
-        .attr("stroke-width", 5)  
-    
+        .attr("stroke-width", 6)  
+        .on("mouseover", function ()
+    {
+        d3.select(this)
+        .attr("stroke-width", 10)
+        .raise(this)
+        //.attr("")
+    })
+    .on("mouseout", function ()
+       {
+        d3.select(this)
+        .attr("stroke-width", 6)
+    })
     var lineGenerator = d3.line()
         .x(function(data){return xScale(data.year)})
         .y(function(data){return yScale(data[array])})
@@ -350,7 +361,7 @@ var drawLegend = function (legarray, cScale)
     d3.select("svg")
     .append("g")
     .attr("id","legend")
-    .attr("transform","translate("+(screen.width-margins.right)+","+(margins.top)+")");
+    .attr("transform","translate("+(screen.width-margins.right-850)+","+(margins.top)+")");
     
     var gs = d3.select("#legend")
     .selectAll("g")
@@ -359,10 +370,10 @@ var drawLegend = function (legarray, cScale)
     .append("g")
     .attr("transform", function(arr,i)
          {
-        return "translate(0, "+i*30+")";
+        return "translate(0, "+i*50+")";
     })
     
-gs.append("rect").attr("width", 50).attr("height",20)
+gs.append("rect").attr("width", 300).attr("height",40)
     .attr("fill", function (arr)
           {
     return cScale(arr.index)
@@ -371,8 +382,10 @@ gs.append("rect").attr("width", 50).attr("height",20)
     
     gs.append("text")
     .text(function(arr){return arr.name})
+   
     .attr("x", 15)
-    .attr("y", 10)
+    .attr("y", 25)
+    //.fill("color", "white")
     //.attr("fill", "black")
 }
 

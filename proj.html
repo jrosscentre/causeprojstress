@@ -3,19 +3,76 @@
         <script src="https://d3js.org/d3.v5.min.js"></script>
         <script src= "proj.js"></script>
 </head>
-    <h1> Student Stress since 1983</h1>
+    <h1> Student Stress in Recent History</h1>
+    <style>
+        body{
+            background-image: url("https://tireuishome.com/wp-content/uploads/2018/05/beautiful-scenery-pictures-unique-beautiful-scenery-bdfjade-pleasing-of-beautiful-scenery-pictures.jpg")
+        
+        }
+        h1{
+            text-align: center;
+            color:azure;
+            font-size: 50
+            
+        }
+        svg{
+            background-color: lightcyan;
+           
+            margin-left: 420;
+        float:top;
+            clear:left;
+            
+            margin-top: 20;
+            
+            
+        }
+        
+        #legend{
+            width:100;
+            
+        
+            
+        }
+        #buttons{
+            margin-left: 700;
+            margin-bottom: 20;
+            
+        }
+        #origperc{
+             margin-left: 450;
+            float:;
+            
+        }
+        #xaxislabel{
+            margin-left: 420;
+            font-size: 20;
+            margin-bottom: 30;
+            background-color:lightcyan;
+            width:1000;
+            text-align: center
+        }
+        button{
+            padding: 10;
+            color: white;
+            background-color: navy;
+            
+            
+        }
     
+    </style>
     
-    
+  
     
     <svg>
     </svg>
-     <div id = xaxislabel> Year</div>
+    <div id = xaxislabel> Year</div>
+      <button id = origperc> Original Percentage graph</button>
+     
     <div id = buttons>
         <button id = totalpopact> Total Population Percentage </button>
         <button id = tuitionprice> Tuition Prices</button>
         <button id = pss> Percieved Stress Scale </button>
-        <button id = origperc> Original Percentage graph</button>
+     
         
         
     </div>
